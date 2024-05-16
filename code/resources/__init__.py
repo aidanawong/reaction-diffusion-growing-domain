@@ -1,0 +1,1 @@
+# Hello, this initializes the resources package
