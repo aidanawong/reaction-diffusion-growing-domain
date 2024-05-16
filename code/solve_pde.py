@@ -28,8 +28,6 @@ class ReactDiffusion(BaseStateSystem):
         self.ic = ic
         self.bc = bc
 
-        self.short_arr = np.ones(self.N - 1)
-        self.long_arr = np.ones(self.N)
         self.P = lambda t: self.D * dt / (2 * (self.L(t) * self.dx)**2)
         self.Q = lambda t: rt(t) * dt / (2 * r(t))
 
