@@ -9,7 +9,7 @@ class ReactDiffusion(BaseStateSystem):
                  width=1000, dx=1, 
                  dt=0.1, steps=1,
                  labels=["Tulip Pigments", "Building Blocks", "Virus"], 
-                 colors=["r", "g", "b", "c", "m", "y", "k"], cmaps = ["Tulip", "Greens", "Blues", "Oranges", "RdPu", "GnBu"]):
+                 cmaps=["Tulip", "Greens", "Blues", "Oranges", "RdPu", "GnBu"]):
             
         self.D = np.array(D)
         self.R = R
@@ -32,21 +32,27 @@ class ReactDiffusion(BaseStateSystem):
         self.Q = lambda t: rt(t) * dt / (2 * r(t))
 
         self.labels = labels
-        self.colors = colors
         self.cmaps = cmaps        
         
     def initialise(self):
+        """
+        Initializes the PDE by handling errors, and finding the number of variables
+        """
         assert (self.bc == "dirichlet" or self.bc == "neumann"), "Sorry, Please input \"dirichlet\" or \"neumann\".\nNo Robin conditions yet ;-)"
         
         error_tester = [np.size(self.D), np.size(self.R), np.size(self.ic(1))]
         assert all(size == error_tester[0] for size in error_tester), "Sorry, please check the number of variables."
         
+        # Number of equations/variables in the system of PDE's
         self.Nsys = np.size(self.D)
 
         self.t = 0
         self.U = self.ic(self.N)
         
     def update(self):
+        """
+        Run the equation for a user-specified number of steps
+        """
         for _ in range(self.steps):
             self._update()
             self.t += self.dt
@@ -54,6 +60,9 @@ class ReactDiffusion(BaseStateSystem):
             self.Xarray = np.linspace(0, Lnew, self.N)
 
     def _update(self):
+        """
+        Advance the numerics of the PDE by one increment
+        """
         U, t, dt, P, Q, R = self.U, self.t, self.dt, self.P, self.Q, self.R
         self.U = np.zeros((self.Nsys, self.N))
         PP = np.array([P(t), P(t + dt)])
@@ -63,6 +72,7 @@ class ReactDiffusion(BaseStateSystem):
 
     def TDMAsolver(self, a, b, c, d):
         """
+        Solves the tri-diagonal matrix defined by the Crank-Nicolson method
         Credit to Theo Christiaanse
         https://gist.github.com/TheoChristiaanse/d168b7e57dd30342a81aa1dc4eb3e469?permalink_comment_id=2225268
         """
@@ -83,7 +93,9 @@ class ReactDiffusion(BaseStateSystem):
         return xc
             
     def run_pde(self, bc, dt, u, Ru, P, Q):
-        # Makes Crank Nicolson tri diagonal matrix
+        """
+        Assembles the Crank Nicolson tri diagonal matrix
+        """
         n = len(u)
         Pold, Pnew = P
         Qold, Qnew = Q 
@@ -106,6 +118,13 @@ class ReactDiffusion(BaseStateSystem):
         return self.TDMAsolver(coef1, coef2, coef3, rhs)
         
     def run_and_retrieve(self, n_steps):
+        """
+        Run the complete PDE system for the specified amount of time.
+        Returns: 
+            u_mat (array) - Contains all values of each PDE variable
+            x_mat (array) - Contains all values of the domain growth
+            t (array) - Contains all values of time
+        """
         N, Nsys = self.N, self.Nsys
         tf = self.dt * self.steps * n_steps
         u_mat = np.zeros((n_steps, Nsys, N))

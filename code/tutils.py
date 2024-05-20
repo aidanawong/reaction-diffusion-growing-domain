@@ -9,17 +9,10 @@ import matplotlib.tri as tri
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 import resources.tulip_cmap
+from resources.grow_func import GROW_FORWARD_INIT_WIDTH, GROW_FORWARD_CURVATURE_CONST, \
+                                GROW_BACKWARD_INIT_WIDTH, GROW_BACKWARD_CURVATURE_CONST
 
 class BaseStateSystem:
-    """
-    Base object for "State System".
-
-    We are going to repeatedly visualise systems which are Markovian:
-    the have a "state", the state evolves in discrete steps, and the next
-    state only depends on the previous state.
-
-    To make things simple, I'm going to use this class as an interface.
-    """
     def __init__(self):
         raise NotImplementedError()
 
@@ -27,11 +20,19 @@ class BaseStateSystem:
         raise NotImplementedError()
     
     def initialise_cmap_figure(self):
+        """
+        Initializes the figure of a colour map
+        It will have dimensions height to length as 0.63:self.Nsys
+        """
         # fig = plt.figure(figsize=plt.figaspect(0.6/self.Nsys)) # original
         fig = plt.figure(figsize=plt.figaspect(0.63/self.Nsys))
         return fig
     
     def initialise_cmap_figure_flipy(self):
+        """
+        Initializes the figure of a colour map
+        It will have dimensions height to length as 1:0.875*self.Nsys
+        """
         fig = plt.figure(figsize=plt.figaspect(1/(0.875*self.Nsys)))
         return fig
 
@@ -42,18 +43,34 @@ class BaseStateSystem:
         raise NotImplementedError()
     
     def make_labels(self, ax, surf, idx, flipy):
+        """
+        Draws the correct labels on the subplot given
+        Inputs:
+            ax (matplotlib.axes._axes.Axes) - axes to which labels are to be given
+            surf (mpl_toolkits.mplot3d.art3d.Poly3DCollection) - plot from ax.plot_surface or ax.tricontourf
+            idx (int) - index denoting which label to use in a list of labels denoted self.labels
+            flipy (bool) - True if plots are to be in portrait style, False otherwise
+        """
+        fontsize = 16
+
         if flipy:
-            ax.set_xlabel("Space", fontsize=16)
-            ax.set_ylabel("Time", fontsize=16)
+            ax.set_xlabel("Space", fontsize=fontsize)
+            ax.set_ylabel("Time", fontsize=fontsize)
         else: 
-            ax.set_xlabel("Time", fontsize=16)
-            ax.set_ylabel("Space", fontsize=16)
+            ax.set_xlabel("Time", fontsize=fontsize)
+            ax.set_ylabel("Space", fontsize=fontsize)
         divider = make_axes_locatable(ax)
         cax = divider.append_axes("right", size="5%", pad=0.05)
         cbar = plt.colorbar(surf, cax=cax) # aspect=8 fraction=0.046, pad=0.04
-        cbar.set_label(self.labels[idx], fontsize=16)
+        cbar.set_label(self.labels[idx], fontsize=fontsize)
 
     def plot_surf(self, filename, n_steps):
+        """
+        Plots the PDE in a contour plot of space vs. time in a grid-like fashion
+        Inputs: 
+            filename (str) - name of the image's file
+            n_steps (int) - number of 
+        """
         self.initialise()
         fig = self.initialise_cmap_figure()
 
@@ -71,13 +88,28 @@ class BaseStateSystem:
         plt.show()
 
     def plot_tri(self, filename, n_steps, symmetry=False, scaling="auto", radius=None, flipx=False, flipy=False):
+        """
+        Uses triangulation to plot the PDE in a contour plot of space vs. time
+        Inputs: 
+            filename (str) - name of the image's file
+            n_steps (int) - number of 
+            symmetry (bool) - True if the plot should be symmetric around the line when space = 0
+            scaling (str) - set to auto for automatic scaling of the box size
+            radius (function or None) - None if there is no curving of the plot. 
+                                        function returns the radius of curvature for each line of space at a given time
+            flipx (bool) - True if from left to right the time moves from maximum to minimum. False otherwise
+            flipy (bool) - True if the subplots are in portrait form wih the x-axis as space and the y-axis as time, False otherwise
+        """
+
+        mask_adjustment_const = 1.2
+
         self.initialise()
         if flipx: 
-            ratio = 1.31447
-            init_width = 0.526
+            ratio = GROW_BACKWARD_CURVATURE_CONST
+            init_width = GROW_BACKWARD_INIT_WIDTH
         else:
-            ratio = 12
-            init_width = 4.8019
+            ratio = GROW_FORWARD_CURVATURE_CONST
+            init_width = GROW_FORWARD_INIT_WIDTH
             
         if flipy:
             fig = self.initialise_cmap_figure_flipy()
@@ -119,10 +151,10 @@ class BaseStateSystem:
 
         if flipy:
             triang = tri.Triangulation(x_mat_flat, tt_flat)
-            mask = long_edges(x_mat_flat, tt_flat, triang.triangles, 1.2*np.hypot(np.max(np.diff(tarr)), np.max(np.diff(x_mat_flat))))
+            mask = long_edges(x_mat_flat, tt_flat, triang.triangles, mask_adjustment_const*np.hypot(np.max(np.diff(tarr)), np.max(np.diff(x_mat_flat))))
         else:
             triang = tri.Triangulation(tt_flat, x_mat_flat)
-            mask = long_edges(tt_flat, x_mat_flat, triang.triangles, 1.2*np.hypot(np.max(np.diff(tarr)), np.max(np.diff(x_mat_flat))))
+            mask = long_edges(tt_flat, x_mat_flat, triang.triangles, mask_adjustment_const*np.hypot(np.max(np.diff(tarr)), np.max(np.diff(x_mat_flat))))
         
         triang.set_mask(mask)
 
@@ -144,7 +176,8 @@ class BaseStateSystem:
             if flipx:
                 ax.invert_yaxis()
             self.make_labels(ax, surf, idx, flipy)
-            # ax.set_axis_off()
+
+            # ax.set_axis_off() # Uncomment to remove any axes or colourbars
 
         plt.tight_layout()
         plt.savefig(filename, dpi=150, bbox_inches=0, transparent=False)
