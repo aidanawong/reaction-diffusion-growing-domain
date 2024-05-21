@@ -84,7 +84,11 @@ main()
 
 Which calculates the Schnakenberg model given below
 
-$$ \begin{align}  \frac{\partial u}{\partial t} &= \frac{\partial^2 u}{\partial x^2} + \alpha - u + u^2 v \\frac{\partial v}{\partial t} &= \frac{\partial^2 v}{\partial x^2} + \beta - u^2 v \\\frac{\partial u}{\partial x} \biggr|_{x=0,L} &= 0 \\\frac{\partial v}{\partial x} \biggr|_{x=0,L} &= 0\\L(t) = e^{\rho t}\end{align} $$
+$$ \begin{align} 
+\frac{\partial u}{\partial t} &= \frac{\partial^2 u}{\partial x^2} + \alpha - u + u^2 v \\
+\frac{\partial v}{\partial t} &= \frac{\partial^2 v}{\partial x^2} + \beta - u^2 v \\
+L(t) = e^{\rho t}
+\end{align} $$
 
 Where $\rho = 0.001$
 
