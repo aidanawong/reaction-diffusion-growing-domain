@@ -1,5 +1,6 @@
 import numpy as np
 
+# Constants specific for the tulip related growth functions
 GROW_FORWARD_INIT_WIDTH = 0.526
 GROW_FORWARD_CURVATURE_CONST = 12
 GROW_BACKWARD_INIT_WIDTH = 4.8019

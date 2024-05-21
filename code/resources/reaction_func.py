@@ -14,12 +14,14 @@ def initalise_bump(shape):
     )
 
 def fh_ng():
+    # FitzHugh-Nagumo
     Da, Db, alpha, beta = 0.01, 1, -0.005, 10
     def Ra(U): return U[0] - U[0] ** 3 - U[1] + alpha
     def Rb(U): return (U[0] - U[1]) * beta
     return [Da, Db], [Ra, Rb], initalise_bump, (-1,1)
 
 def schnak():
+    # Schnakenberg
     Da, Db, alpha, beta = 0.01, 1., 0.1, 0.9 
     def Ra(U): return alpha - U[0] + U[0] ** 2 * U[1]
     def Rb(U): return beta - U[0] ** 2 * U[1]
@@ -35,6 +37,7 @@ def schnak():
     return [Da, Db], [Ra, Rb], initalise_schnak_random
 
 def gray_scott():
+    # Gray-Scott
     Da, Db = 0.01,  0.005
     alpha, beta = 0.04, 0.06
     def Ra(U): return -U[0]*U[1]**2 + alpha * (1-U[0])
