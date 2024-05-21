@@ -1,7 +1,10 @@
 """
-Utility functions based on Barr's blog post that record and plot the development of the PDEs
-in contour plots in space vs. time
+Reaction Diffusion Equation on Growing 1D Domain
+Utility functions based on Barr's blog post that record and plot the development of the PDEs in contour plots in space vs. time
+Author: Aidan Wong
+Date: May 20, 2024
 """
+
 from types import FunctionType, NoneType
 
 import numpy as np
