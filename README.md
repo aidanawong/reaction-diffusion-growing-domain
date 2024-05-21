@@ -44,7 +44,7 @@ main()
 ### Utility parameters
 - `steps` is the number of calculation steps between recording data for plotting it (i.e. the greater the steps, the lower the resolution).
 - `n_steps` is the number of times the simulation runs for the number of `steps` (i.e. the tot.al number of calculations will be `n_steps * steps`)
-- Also, the boundary conditions `bc` can be either `neumann` for Neumann conditions or `dirichlet` for Dirichlet conditions.
+- Also, the boundary conditions `bc` can be either `neumann` for Neumann/zero flux conditions or `dirichlet` for Dirichlet conditions.
 - Change `labels` for the labels for each variable.
 - Change `cmaps` for different colour maps.
 - If True, `flipx` makes the x-axis run from the maximum (`T`) to minimum (zero) as one goes from left to right.
@@ -87,9 +87,9 @@ Which calculates the Schnakenberg model given below
 $$ \begin{align} 
 \frac{\partial u}{\partial t} &= \frac{\partial^2 u}{\partial x^2} + \alpha - u + u^2 v \\
 \frac{\partial v}{\partial t} &= \frac{\partial^2 v}{\partial x^2} + \beta - u^2 v \\
-L(t) = e^{\rho t}
+L(t) &= e^{\rho t}
 \end{align} $$
 
-Where $\rho = 0.001$
+Where $\rho = 0.001$, and Neumann conditions are applied on the boundary.
 
 ![schnakenberg](./figures/test.png)
