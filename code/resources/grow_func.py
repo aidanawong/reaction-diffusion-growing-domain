@@ -13,7 +13,7 @@ def growno():
     return r, rt
 
 def growexp():
-    rho = 0.3
+    rho = 0.001
     def r(t): return np.exp(rho * t)
     def rt(t): return rho*np.exp(rho*t)
     return  r, rt
@@ -25,7 +25,7 @@ def growlin():
     return  r, rt
 
 def growlog():
-    rho, xi = 0.01, 26.0 # 0.08, 2 # log
+    rho, xi = 0.01, 26.0 # log
     def r(t): return np.exp(rho*t) / (1 + (np.exp(rho*t) - 1) / xi)
     def rt(t): return rho * r(t) * (1 - r(t) / xi)
     return r, rt
