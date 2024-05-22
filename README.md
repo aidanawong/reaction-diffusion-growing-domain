@@ -98,6 +98,6 @@ Where $\rho = 0.001$, and Neumann conditions are applied on the boundary.
 
 [1] Crampin EJ, Gaffney EA, Maini PK (1999) Reaction and diffusion on growing do-
 mains scenarios for robust pattern formation. Bulletin of Mathematical Biology 61(6):1093–
-1120. [https://doi.org/doi.org/10.1006/bulm.1999.0131](https://doi.org/doi.org/10.1006/bulm.1999.0131).
+1120. [https://doi.org/10.1006/bulm.1999.0131](https://doi.org/10.1006/bulm.1999.0131).
 
 [2] Barr I (2017) Turing patterns. URL: [https://www.degeneratestate.org/posts/2017/May/05/turing-patterns/](https://www.degeneratestate.org/posts/2017/May/05/turing-patterns/)
