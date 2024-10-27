@@ -29,7 +29,7 @@ def log_graph(x, y, guess, L0, show_cov=False):
     # Graph x vs y
     plt.scatter(x, y, s=16, color="black")
     if show_cov: plt.errorbar(x, y, yerr=yerr,color='black',fmt=".", label="Uncertainty")
-    plt.plot(xfit, yfit, label="time_multurve of Best Fit")
+    plt.plot(xfit, yfit, label="Curve of Best Fit")
     return param, (rho_uncer, xi_uncer)
 
 def wolpert_graph(x, y, guess=np.ones(4), show_cov=False):
